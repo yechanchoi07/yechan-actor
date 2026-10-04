@@ -54,39 +54,7 @@ const SB=supabase.createClient('https://wtvnrqpwruxwedlqhrwx.supabase.co','sb_pu
 const storage=(b,p)=>'https://wtvnrqpwruxwedlqhrwx.supabase.co/storage/v1/object/public/'+b+'/'+String(p).split('/').map(encodeURIComponent).join('/');
 const esc=s=>String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
 function yt(v){if(!v)return'';let t=String(v).trim(),m=t.match(/<iframe[^>]+src=["']([^"']+)["']/i);if(m)t=m[1];try{let u=new URL(t),h=u.hostname.replace(/^www\./,'');let list=u.searchParams.get('list');let id=u.searchParams.get('v');if(h==='youtu.be')id=u.pathname.slice(1);if(h.includes('youtube.com')&&u.pathname.startsWith('/shorts/'))id=u.pathname.split('/')[2];if(list)return 'https://www.youtube-nocookie.com/embed/videoseries?list='+encodeURIComponent(list)+'&rel=0&playsinline=1&origin='+encodeURIComponent(location.origin);if(id)return 'https://www.youtube-nocookie.com/embed/'+encodeURIComponent(id)+'?rel=0&playsinline=1&origin='+encodeURIComponent(location.origin);if(h.includes('youtube.com')&&u.pathname.startsWith('/embed/')){u.hostname='www.youtube-nocookie.com';u.searchParams.set('origin',location.origin);u.searchParams.set('playsinline','1');return u.toString()}}catch(e){}return''}
-async function downloadProfileFile(url,filename){
-  try{
-    const response=await fetch(url);
-
-    if(!response.ok){
-      throw new Error('파일을 불러오지 못했습니다.');
-    }
-
-    const blob=await response.blob();
-    const blobUrl=URL.createObjectURL(blob);
-
-    const a=document.createElement('a');
-    a.href=blobUrl;
-    a.download=filename||'배우 최예찬 프로필.pdf';
-    a.style.display='none';
-
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-
-    setTimeout(()=>{
-      URL.revokeObjectURL(blobUrl);
-    },1500);
-
-  }catch(e){
-    console.error(e);
-
-    // Safari에서 브라우저가 다운로드를 막는 경우
-    // Supabase 다운로드 URL로 이동
-    const fallback=url+'?download='+encodeURIComponent(filename||'profile.pdf');
-    window.location.href=fallback;
-  }
-}
+async function downloadProfileFile
 function videoCard(v){let src=v.video_path?storage('actor-videos',v.video_path):'',em=yt(v.youtube_embed||v.youtube_url);let media=src?'<video controls playsinline preload="metadata" src="'+esc(src)+'"></video>':em?'<iframe loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen src="'+esc(em)+'"></iframe>':'<div class="empty">영상을 준비 중입니다.</div>';let dl=src?'<a href="'+esc(src+'?download='+encodeURIComponent(v.video_name||v.title||'video'))+'">영상 다운로드</a>':'';return '<article class="card"><div class="video">'+media+'</div><div class="video-copy"><div class="video-title"><h3>'+esc(v.title||'영상')+'</h3>'+dl+'</div><p>'+esc(v.description||'')+'</p></div></article>'}
 async function load(){try{const[{data:c,error:ce},{data:m,error:me},{data:d,error:de}]=await Promise.all([SB.from('site_content').select('*').eq('id',true).single(),SB.from('media_items').select('*').order('section').order('sort_order').order('created_at'),SB.from('profile_documents').select('*').order('sort_order').order('created_at')]);if(ce)throw ce;if(me)throw me;if(de)throw de;document.getElementById('name').textContent=c.name||'최예찬';document.getElementById('english').textContent=c.english_name||'CHOI YECHAN';document.getElementById('greeting').textContent=c.greeting||'안녕하세요.\n청춘예찬을 좋아하는 배우, 최예찬입니다.';document.getElementById('info').innerHTML='<div>'+esc(c.school||'')+'</div><div>'+esc(c.birth_year||'')+'년생 · '+esc(c.height_cm||'')+'cm · '+esc(c.weight_kg||'')+'kg</div><div>특기 · '+esc(c.specialty||'')+'</div>';document.getElementById('ig').href=c.instagram_url||'#';const phone=String(c.phone||'').trim(),email=String(c.email||'').trim(),phoneLink=document.getElementById('phoneLink'),emailLink=document.getElementById('emailLink');document.getElementById('phoneText').textContent=phone||'전화번호를 준비 중입니다.';document.getElementById('emailText').textContent=email||'이메일을 준비 중입니다.';if(phone){phoneLink.href='tel:'+phone.replace(/[^0-9+]/g,'');}else{phoneLink.removeAttribute('href')}if(email){emailLink.href='mailto:'+email;}else{emailLink.removeAttribute('href')}
 const p=m.filter(x=>x.section==='profile'&&x.image_path),track=document.getElementById('photos'),dots=document.getElementById('dots'),prev=document.getElementById('photoPrev'),next=document.getElementById('photoNext'),counter=document.getElementById('photoCounter'),nav=document.getElementById('photoNav');
