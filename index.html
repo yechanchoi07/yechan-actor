@@ -7,6 +7,22 @@
 <style>
 :root{--sky:#dff3ff;--deep:#123b52;--muted:#6a8390;--line:#dcecf2;--shadow:0 18px 42px rgba(24,76,104,.09)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:#111;font-family:Pretendard,"Noto Sans KR",Arial,sans-serif;background:linear-gradient(180deg,#dff3ff 0%,#f7fcff 38%,#eaf7fd 100%)}a{color:inherit;text-decoration:none}.wrap{width:min(680px,calc(100% - 32px));margin:auto}header{position:sticky;top:0;z-index:20;background:#dff3ffd9;backdrop-filter:blur(15px);border-bottom:1px solid #123b5214}.nav{height:58px;display:flex;align-items:center;justify-content:space-between;font-size:10px;letter-spacing:.16em;color:#31586a}.brand{font-weight:750}.hero{padding:25px 0 6px}.hero-card,.card{background:#fff;border-radius:24px;overflow:hidden;box-shadow:var(--shadow)}.photo{position:relative;overflow:hidden;background:#fff}.track{display:flex;height:auto;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;overscroll-behavior-x:contain;touch-action:pan-x}.track::-webkit-scrollbar{display:none}.slide{flex:0 0 100%;scroll-snap-align:start;height:auto}.slide img{width:100%;height:auto;object-fit:contain;object-position:center;background:#fff;display:block}.placeholder{min-height:420px;display:grid;place-items:center;text-align:center;padding:25px;color:var(--muted);background:linear-gradient(145deg,#c9eaf9,#edf9ff)}.placeholder strong{display:block;color:var(--deep);margin-bottom:7px;font-size:18px}.photo-nav{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:0 10px;pointer-events:none}.photo-nav button{pointer-events:auto;width:38px;height:38px;border:1px solid #ffffff66;border-radius:50%;background:#0000002e;color:#fff;font-size:25px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);transition:transform .15s,background .15s}.photo-nav button:hover{background:#00000048}.photo-nav button:active{transform:scale(.94)}.photo-nav button:disabled{opacity:.28;cursor:default}.dots{position:absolute;left:0;right:0;bottom:14px;display:flex;justify-content:center;gap:6px;z-index:3}.dot{border:0;padding:0;cursor:pointer}.dot{width:6px;height:6px;border-radius:99px;background:#fff9}.dot.active{width:20px;background:#fff}.slide-counter{position:absolute;right:14px;bottom:13px;padding:5px 8px;border-radius:999px;background:#00000038;color:#fff;font-size:9px;letter-spacing:.08em;z-index:3;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}.hero-copy{padding:23px 22px 27px}.eyebrow{font-size:10px;letter-spacing:.18em;color:#6d8997;margin-bottom:9px}.hero-copy h1{font-size:34px;letter-spacing:-.04em;line-height:1.1;margin:0 0 7px}.roman{font-size:11px;letter-spacing:.28em;color:#6a8491;margin-bottom:18px}.greeting{font-size:14px;line-height:1.8;color:#385565;margin:0;white-space:pre-line}.profile-info{margin-top:17px;padding-top:15px;border-top:1px solid #123b5224;color:#111;font-size:15px;line-height:1.95}.section{padding:27px 0 3px}.section-head{display:flex;justify-content:space-between;align-items:end;margin:0 3px 12px}.section-head h2{font-size:20px;letter-spacing:-.035em;margin:0}.section-head span{font-size:10px;letter-spacing:.14em;color:#6b8794}.video-list{display:grid;gap:13px}.video{position:relative;aspect-ratio:16/9;background:#b9deed}.video iframe,.video video{position:absolute;inset:0;width:100%;height:100%;border:0}.video video{background:#07151d;object-fit:contain}.empty{height:100%;display:grid;place-items:center;color:#587482;font-size:12px}.video-copy{padding:15px 17px 18px}.video-title{display:flex;justify-content:space-between;gap:10px;align-items:center}.video-title h3{font-size:15px;margin:0}.video-title a{font-size:10px;border:1px solid #b9dceb;border-radius:99px;padding:8px 10px;color:#31586a;white-space:nowrap}.video-copy p{font-size:12px;line-height:1.65;color:var(--muted);margin:6px 0 0}.files{padding:18px}.file-row{display:flex;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);font-size:11px}.file-row:last-child{border:0}.file-row b{display:block}.file-row small{display:block;color:var(--muted);margin-top:4px}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.btn{display:inline-flex;align-items:center;justify-content:center;padding:9px 12px;border:1px solid #b9dceb;border-radius:99px;background:#f8fdff;color:#31586a;font-size:10px}.instagram{text-align:center;padding:28px 20px 30px}.instagram h2{font-size:18px;margin:0 0 6px}.instagram p{font-size:12px;color:var(--muted);margin:0 0 14px}.ig-btn{display:inline-flex;padding:11px 16px;background:var(--deep);color:#fff;border-radius:99px;font-size:11px}.contact-box{text-align:left;padding:28px 20px 30px;border-radius:0;box-shadow:none;background:transparent}.contact-box h2{font-size:18px;margin:0 0 14px;color:#111;letter-spacing:-.03em}.contact-list{display:grid;border-top:1px solid #111}.contact-link{display:flex;align-items:baseline;justify-content:flex-start;gap:18px;padding:12px 0;border-bottom:1px solid #d8d8d8;border-radius:0;background:transparent;color:#111;font-size:14px}.contact-link:last-child{border-bottom:1px solid #111}.contact-label{flex:0 0 58px;font-size:9px;letter-spacing:.14em;color:#111;margin-right:0}.contact-link span:last-child{word-break:break-all}footer{text-align:center;padding:30px 0 10px;color:#7a949f;font-size:10px;letter-spacing:.08em}.notice{padding:10px 0;text-align:center;font-size:10px;color:#6e8792}@media(min-width:700px){body{padding:20px 0}.nav{padding:0 18px}header{width:min(680px,calc(100% - 40px));margin:auto;border-radius:18px}.wrap{width:min(680px,calc(100% - 40px))}}
+.ig-profile{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  color:#111;
+  font-size:15px;
+  font-weight:600;
+  letter-spacing:.01em;
+}
+
+.ig-profile svg{
+  width:21px;
+  height:21px;
+  display:block;
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -16,7 +32,23 @@
 <section class="section"><div class="section-head"><h2>자유연기</h2><span>SCENE</span></div><div class="video-list" id="free"></div></section>
 <section class="section"><div class="section-head"><h2>출연영상</h2><span>WORKS</span></div><div class="video-list" id="works"></div></section>
 <section class="section"><div class="section-head"><h2>프로필</h2><span>PROFILE</span></div><div class="card files" id="docs"></div></section>
-<section class="section" id="contact"><div class="card instagram"><h2>Instagram</h2><p>배우 최예찬의 일상과 작업을 만나보세요.</p><a class="ig-btn" id="ig" target="_blank" rel="noopener">Instagram 프로필 보기</a></div><div class="card contact-box"><h2>Contact</h2><div class="contact-list"><a class="contact-link" id="phoneLink"><span class="contact-label">PHONE</span><span id="phoneText"></span></a><a class="contact-link" id="emailLink"><span class="contact-label">E-MAIL</span><span id="emailText"></span></a></div></div></section><footer>CHOI YECHAN · ACTOR PROFILE</footer></main>
+<section class="section" id="contact"><div class="card instagram">
+  <a class="ig-profile" id="ig" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="5"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"/>
+      <circle cx="12" cy="12" r="4.2"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"/>
+      <circle cx="17.4" cy="6.7" r="1.2"
+        fill="currentColor"/>
+    </svg>
+    <span>_yechanchoi_</span>
+  </a>
+</div><div class="card contact-box"><h2>Contact</h2><div class="contact-list"><a class="contact-link" id="phoneLink"><span class="contact-label">PHONE</span><span id="phoneText"></span></a><a class="contact-link" id="emailLink"><span class="contact-label">E-MAIL</span><span id="emailText"></span></a></div></div></section><footer>CHOI YECHAN · ACTOR PROFILE</footer></main>
 <script>
 const SB=supabase.createClient('https://wtvnrqpwruxwedlqhrwx.supabase.co','sb_publishable_8_l_iQYIVdOGmdcak9DaWQ_6Z9GcCer');
 const storage=(b,p)=>'https://wtvnrqpwruxwedlqhrwx.supabase.co/storage/v1/object/public/'+b+'/'+String(p).split('/').map(encodeURIComponent).join('/');
