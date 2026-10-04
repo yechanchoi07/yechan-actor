@@ -25,7 +25,75 @@ async function upload(bucket,file){
   return path;
 }
 async function load(){[site]=await api('site_content?select=*&id=eq.true');media=await api('media_items?select=*&order=section.asc,sort_order.asc,created_at.asc');docs=await api('profile_documents?select=*&order=sort_order.asc,created_at.asc');for(const k of ['name','english_name','school','birth_year','height_cm','weight_kg','specialty','phone','instagram_url','greeting'])$(k).value=site[k]??'';$('site_email').value=site.email||'';renderAll()}
-function renderAll(){renderPhotos();for(const [id,sec] of [['introList','intro'],['freeList','free_acting'],['worksList','works']]){const box=$(id);box.innerHTML='';media.filter(x=>x.section===sec).forEach((m,i)=>{const d=document.createElement('div');d.className='item';d.dataset.id=m.id;d.innerHTML='<div class="head"><strong>'+(esc(m.title||'영상'))+'</strong><button class="btn danger del">삭제</button></div><label>제목<input class="title" value="'+esc(m.title)+'"></label><label>설명<input class="desc" value="'+esc(m.description||'')+'"></label><label>YouTube URL 또는 퍼가기 iframe<textarea class="embed">'+esc(m.youtube_embed||m.youtube_url||'')+'</textarea></label><label>직접 영상 파일 (선택)<input class="video" type="file" accept="video/*"></label><div class="status">'+(m.video_name?'현재 파일: '+esc(m.video_name):'YouTube 또는 파일 중 하나를 사용할 수 있습니다.')+'</div><button class="btn" data-save>이 영상 저장</button>';d.querySelector('.del').onclick=async()=>{await api('media_items?id=eq.'+m.id,{method:'DELETE'});await load()};d.querySelector('[data-save]').onclick=async()=>{try{$('status').textContent='영상 저장 중...';const val={title:d.querySelector('.title').value,description:d.querySelector('.desc').value,youtube_embed:d.querySelector('.embed').value,sort_order:i};const f=d.querySelector('.video').files[0];if(f){val.video_path=await upload('actor-videos',f);val.video_name=f.name}await api('media_items?id=eq.'+m.id,{method:'PATCH',body:JSON.stringify(val)});await load();$('status').textContent='영상 저장 완료'}catch(e){$('status').textContent=e.message}};box.appendChild(d)})}}
+function renderAll(){renderPhotos();renderDocs();for(const [id,sec] of [['introList','intro'],['freeList','free_acting'],['worksList','works']]){const box=$(id);box.innerHTML='';media.filter(x=>x.section===sec).forEach((m,i)=>{const d=document.createElement('div');d.className='item';d.dataset.id=m.id;d.innerHTML='<div class="head"><strong>'+(esc(m.title||'영상'))+'</strong><button class="btn danger del">삭제</button></div><label>제목<input class="title" value="'+esc(m.title)+'"></label><label>설명<input class="desc" value="'+esc(m.description||'')+'"></label><label>YouTube URL 또는 퍼가기 iframe<textarea class="embed">'+esc(m.youtube_embed||m.youtube_url||'')+'</textarea></label><label>직접 영상 파일 (선택)<input class="video" type="file" accept="video/*"></label><div class="status">'+(m.video_name?'현재 파일: '+esc(m.video_name):'YouTube 또는 파일 중 하나를 사용할 수 있습니다.')+'</div><button class="btn" data-save>이 영상 저장</button>';d.querySelector('.del').onclick=async()=>{await api('media_items?id=eq.'+m.id,{method:'DELETE'});await load()};d.querySelector('[data-save]').onclick=async()=>{try{$('status').textContent='영상 저장 중...';const val={title:d.querySelector('.title').value,description:d.querySelector('.desc').value,youtube_embed:d.querySelector('.embed').value,sort_order:i};const f=d.querySelector('.video').files[0];if(f){val.video_path=await upload('actor-videos',f);val.video_name=f.name}await api('media_items?id=eq.'+m.id,{method:'PATCH',body:JSON.stringify(val)});await load();$('status').textContent='영상 저장 완료'}catch(e){$('status').textContent=e.message}};box.appendChild(d)})}}
+function renderDocs(){
+  const box=$('docs');
+  box.innerHTML='';
+
+  if(!docs.length){
+    box.innerHTML='<div class="status">등록된 프로필 파일이 없습니다.</div>';
+    return;
+  }
+
+  docs.forEach((x,i)=>{
+    const d=document.createElement('div');
+
+    d.className='item';
+
+    d.innerHTML=
+      '<div class="head">'+
+        '<strong>'+
+          esc(x.title||('프로필 파일 '+(i+1)))+
+        '</strong>'+
+        '<button class="btn danger delDoc">삭제</button>'+
+      '</div>'+
+      '<div class="status">'+
+        esc((x.document_type||'file').toUpperCase())+
+        ' 파일'+
+      '</div>'+
+      '<div class="status">'+
+        '현재 파일: '+
+        esc(x.storage_path||'')+
+      '</div>';
+
+    d.querySelector('.delDoc').onclick=async()=>{
+      if(!confirm('이 프로필 파일을 삭제할까요?')){
+        return;
+      }
+
+      try{
+        $('status').textContent='프로필 파일 삭제 중...';
+
+        if(x.storage_path){
+          const {error:se}=await SB.storage
+            .from('profile-documents')
+            .remove([x.storage_path]);
+
+          if(se){
+            throw se;
+          }
+        }
+
+        await api(
+          'profile_documents?id=eq.'+x.id,
+          {method:'DELETE'}
+        );
+
+        await load();
+
+        $('status').textContent='프로필 파일 삭제 완료';
+
+      }catch(e){
+        console.error(e);
+
+        $('status').textContent=
+          '파일 삭제 실패: '+e.message;
+      }
+    };
+
+    box.appendChild(d);
+  });
+}
 function renderPhotos(){const box=$('photos');box.innerHTML='';media.filter(x=>x.section==='profile').forEach((m,i)=>{const d=document.createElement('div');d.className='item';d.innerHTML='<div class="head"><strong>사진 '+(i+1)+'</strong><button class="btn danger del">삭제</button></div><img style="width:95px;height:120px;object-fit:cover;border-radius:9px;margin:8px 0" src="'+U+'/storage/v1/object/public/profile-media/'+m.image_path.split('/').map(encodeURIComponent).join('/')+'"><div class="row"><input class="order" style="width:90px" type="number" value="'+(m.sort_order||0)+'"><button class="btn secondary orderbtn">순서 저장</button><input class="pf" type="file" accept="image/*"></div>';d.querySelector('.del').onclick=async()=>{await api('media_items?id=eq.'+m.id,{method:'DELETE'});await load()};d.querySelector('.orderbtn').onclick=async()=>{await api('media_items?id=eq.'+m.id,{method:'PATCH',body:JSON.stringify({sort_order:+d.querySelector('.order').value||0})});await load()};d.querySelector('.pf').onchange=async e=>{try{const f=e.target.files[0];if(!f)return;const p=await upload('profile-media',f);await api('media_items?id=eq.'+m.id,{method:'PATCH',body:JSON.stringify({image_path:p})});await load()}catch(er){$('status').textContent=er.message}};box.appendChild(d)});if(!box.children.length)box.innerHTML='<div class="status">사진이 없습니다.</div>'}
 async function addMedia(section,title){const r=await api('media_items',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({section,title,description:'',youtube_embed:'',youtube_url:'',sort_order:media.filter(x=>x.section===section).length})});await load()}
 $('addPhoto').onclick=()=>{
