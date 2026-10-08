@@ -95,7 +95,60 @@ function renderDocs(){
   });
 }
 function renderPhotos(){const box=$('photos');box.innerHTML='';media.filter(x=>x.section==='profile').forEach((m,i)=>{const d=document.createElement('div');d.className='item';d.innerHTML='<div class="head"><strong>사진 '+(i+1)+'</strong><button class="btn danger del">삭제</button></div><img style="width:95px;height:120px;object-fit:cover;border-radius:9px;margin:8px 0" src="'+U+'/storage/v1/object/public/profile-media/'+m.image_path.split('/').map(encodeURIComponent).join('/')+'"><div class="row"><input class="order" style="width:90px" type="number" value="'+(m.sort_order||0)+'"><button class="btn secondary orderbtn">순서 저장</button><input class="pf" type="file" accept="image/*"></div>';d.querySelector('.del').onclick=async()=>{await api('media_items?id=eq.'+m.id,{method:'DELETE'});await load()};d.querySelector('.orderbtn').onclick=async()=>{await api('media_items?id=eq.'+m.id,{method:'PATCH',body:JSON.stringify({sort_order:+d.querySelector('.order').value||0})});await load()};d.querySelector('.pf').onchange=async e=>{try{const f=e.target.files[0];if(!f)return;const p=await upload('profile-media',f);await api('media_items?id=eq.'+m.id,{method:'PATCH',body:JSON.stringify({image_path:p})});await load()}catch(er){$('status').textContent=er.message}};box.appendChild(d)});if(!box.children.length)box.innerHTML='<div class="status">사진이 없습니다.</div>'}
-async function addMedia(section,title){const r=await api('media_items',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({section,title,description:'',youtube_embed:'',youtube_url:'',sort_order:media.filter(x=>x.section===section).length})});await load()}
+async function addMedia(section,title){
+  try{
+    const count =
+      media.filter(x => x.section === section).length + 1;
+
+    let finalTitle = title;
+
+    if(section === 'free_acting'){
+      finalTitle =
+        '자유연기 ' +
+        String(count).padStart(2,'0');
+    }
+
+    if(section === 'works'){
+      finalTitle =
+        '출연영상 ' +
+        String(count).padStart(2,'0');
+    }
+
+    if(section === 'intro'){
+      finalTitle = '자기소개 영상';
+    }
+
+    await api(
+      'media_items',
+      {
+        method:'POST',
+        headers:{
+          Prefer:'return=representation'
+        },
+        body:JSON.stringify({
+          section:section,
+          title:finalTitle,
+          description:'',
+          youtube_embed:'',
+          youtube_url:'',
+          sort_order:count - 1
+        })
+      }
+    );
+
+    await load();
+
+    $('status').textContent =
+      finalTitle + '이(가) 추가되었습니다.';
+
+  }catch(e){
+
+    console.error(e);
+
+    $('status').textContent =
+      '영상 추가 실패: ' + e.message;
+  }
+}
 $('addPhoto').onclick=()=>{
   const f=document.createElement('input');
 
@@ -155,6 +208,26 @@ $('addPhoto').onclick=()=>{
   };
 
   f.click();
+};
+$('addIntro').onclick=()=>{
+  addMedia(
+    'intro',
+    '자기소개 영상'
+  );
+};
+
+$('addFree').onclick=()=>{
+  addMedia(
+    'free_acting',
+    '자유연기'
+  );
+};
+
+$('addWorks').onclick=()=>{
+  addMedia(
+    'works',
+    '출연영상'
+  );
 };
 $('saveProfile').onclick=async()=>{try{const p={name:$('name').value,english_name:$('english_name').value,greeting:$('greeting').value,school:$('school').value,birth_year:+$('birth_year').value||null,height_cm:+$('height_cm').value||null,weight_kg:+$('weight_kg').value||null,specialty:$('specialty').value,phone:$('phone').value,email:$('site_email').value,instagram_url:$('instagram_url').value};await api('site_content?id=eq.true',{method:'PATCH',body:JSON.stringify(p)});$('status').textContent='프로필 저장 완료'}catch(e){$('status').textContent=e.message}};
 $('addDoc').onclick=async()=>{try{const f=$('docFile').files[0];if(!f)return;const ext=(f.name.split('.').pop()||'').toLowerCase();if(!['pdf','ppt','pptx'].includes(ext))throw Error('PDF/PPT/PPTX만 업로드할 수 있습니다.');if(f.size>50*1024*1024)throw Error('이 파일은 50MB를 초과합니다. Free 플랜에서는 한 파일 최대 50MB입니다.');const p=await upload('profile-documents',f);await api('profile_documents',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({document_type:ext==='pdf'?'pdf':'ppt',title:$('docTitle').value||f.name,storage_path:p,sort_order:docs.length})});await load();$('status').textContent='프로필 파일 업로드 완료'}catch(e){$('status').textContent=e.message}};
